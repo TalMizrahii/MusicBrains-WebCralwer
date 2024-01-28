@@ -25,14 +25,12 @@ def get_related_artists_urls(artist_url_start):
         # Apply each XPath expression
         for xpath in xpaths:
             related_artists = tree.xpath(xpath)
-            # Filter out the original artist's page
-            # related_artists = [url for url in related_artists
-            #                    if url != f'/artist/{artist_id}' and url != f'/artist/{artist_id}']
             print(f"\nXPath: {xpath}")
             print(f"Found {len(related_artists)} results.")
             print(f"Found related artists: {related_artists}\n")
 
 
 if __name__ == '__main__':
+    # An artist url starting point
     artist_url = "https://musicbrainz.org/artist/b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d"
     get_related_artists_urls(artist_url)
