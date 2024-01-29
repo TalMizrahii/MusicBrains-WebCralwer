@@ -13,7 +13,7 @@ def musicExpand(url, pageContents):
     # Extract artist URLs from the HTML content using XPath
     xpath_results = page_html.xpath(xpath)
     # Set an empty list to store the results.
-    url_list = []
+    url_list = set()
 
     # Expand relative URLs to full URLs.
     for result in xpath_results:
@@ -33,26 +33,22 @@ def musicExpand(url, pageContents):
             continue
 
         # Add the musicbrainz address.
-        url_list.append("https://musicbrainz.org" + result)
+        url_list.add("https://musicbrainz.org" + result)
 
     # At the base url to the list.
-    url_list.append(url)
-
-    # Remove duplicates by converting the list to a set and then back to a list.
-    unique_urls = list(set(url_list))
+    url_list.add(url)
 
     # Return the result.
-    return unique_urls
+    return list(url_list)
 
 
 def musicCrawl(url, xpaths):
     def crawl_page(url, crawled_urls, url_occurrences, result_list):
-        if len(result_list) >= 50:
+        if len(crawled_urls) >= 50:
             return  # Stop crawling when 50 unique URLs are reached.
 
-        # If the url we got has been crawled before, return.
-        if url in crawled_urls:
-            return
+        # Add the current url to the crawled_urls.
+        crawled_urls.add(url)
 
         # Get the web page from the base URL.
         response = requests.get(url)
@@ -63,6 +59,10 @@ def musicCrawl(url, xpaths):
 
             # Use musicExpand to get expanded URLs.
             url_artist_list = set(musicExpand(url, page_content))
+
+            # Update the occurrences count for each URL
+            for u in url_artist_list:
+                url_occurrences[u] = url_occurrences.get(u, 0) + 1
 
             # Exploring the urls in the crawled page using XPaths.
             page_html = html.fromstring(response.content)
@@ -87,26 +87,33 @@ def musicCrawl(url, xpaths):
                             url_parts[-1] == 'ratings' or \
                             url_parts[-1] == 'edit':
                         continue
-
+                    # Create the full url.
                     full_url = "https://musicbrainz.org" + result
+                    # Add the count of the url.
+                    url_occurrences[full_url] = url_occurrences.get(full_url, 0) + 1
+                    # Add the url to the crawled urls.
                     xpath_crawled_urls.add(full_url)
 
-            # Combine the URLs from musicExpand and XPaths into a set
+            # Combine the URLs from musicExpand and XPaths into a set.
             url_artist_list.update(xpath_crawled_urls)
 
-            # Update the occurrences count for each URL
+            # Add the url to the result list.
             for u in url_artist_list:
-                url_occurrences[u] = url_occurrences.get(u, 0) + 1
+                # Check for same pair (supposed to be  only 1).
+                if u == url:
+                    continue
+                # Add the src and des elements to the list.
+                result_list.append([url, u])
+            # Sort the list
+            result_list.sort(key=lambda x: (-url_occurrences.get(x[1], 0), x[1]))
 
-            # Add the result to the final list
-            result_list.append([url] + list(url_artist_list))
+            # Wait before crawling the next page.
+            time.sleep(1)
 
-            # Wait for 3 seconds before crawling the next page
-            time.sleep(3)
-
-            # Recursively crawl the expanded URLs
-            for u in url_artist_list:
-                crawl_page(u, crawled_urls, url_occurrences, result_list)
+            # Recursively crawl the expanded URLs.
+            for u in result_list:
+                if u[1] not in crawled_urls:
+                    crawl_page(u[1], crawled_urls, url_occurrences, result_list)
 
     # Initialize the data structures
     crawled_urls = set()
@@ -120,7 +127,27 @@ def musicCrawl(url, xpaths):
     result_list.sort(key=lambda x: (url_occurrences.get(x[0], 0), x[0]))
 
     # Return the final result list (up to 50 unique URLs)
-    return result_list[:50]
+    return result_list
+
+
+def check_pairs(lst):
+    seen_pairs = set()
+    identical_pairs = set()
+    same_source_destination_pair = None
+
+    for pair in lst:
+        source, destination = pair
+        current_pair = (source, destination)
+
+        if current_pair in seen_pairs:
+            identical_pairs.add(current_pair)
+
+        seen_pairs.add(current_pair)
+
+        if same_source_destination_pair is None and source == destination:
+            same_source_destination_pair = current_pair
+
+    return identical_pairs, same_source_destination_pair
 
 
 if __name__ == '__main__':
@@ -136,8 +163,12 @@ if __name__ == '__main__':
         "//*[@id='sidebar']/ul/li/a[starts-with(@href, '/artist/')]/@href"
     ]
 
-    # # An artist url starting point
-    artist_url = "https://musicbrainz.org/artist/b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d"
+    # An artist url starting point
+    artist_url = "https://musicbrainz.org/artist/eab76c9f-ff91-4431-b6dd-3b976c598020"
 
     listUrls = musicCrawl(artist_url, xpaths)
-    print(listUrls)
+
+    identical_pairs, same_source_destination_pair = check_pairs(listUrls)
+
+    print("Identical Pairs:", identical_pairs)
+    print("Same Source and Destination Pair:", same_source_destination_pair)
