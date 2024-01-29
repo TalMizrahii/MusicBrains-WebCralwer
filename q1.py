@@ -32,5 +32,5 @@ def get_related_artists_urls(artist_url_start):
 
 if __name__ == '__main__':
     # An artist url starting point
-    artist_url = "https://musicbrainz.org/artist/b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d"
+    artist_url = "https://musicbrainz.org/artist/eab76c9f-ff91-4431-b6dd-3b976c598020"
     get_related_artists_urls(artist_url)
