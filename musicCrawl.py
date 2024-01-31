@@ -108,7 +108,7 @@ def musicCrawl(url, xpaths):
             result_list.sort(key=lambda x: (-url_occurrences.get(x[1], 0), x[1]))
 
             # Wait before crawling the next page.
-            time.sleep(1)
+            time.sleep(3)
 
             # Recursively crawl the expanded URLs.
             for u in result_list:
