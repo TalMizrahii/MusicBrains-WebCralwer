@@ -44,9 +44,7 @@ The program requires the following dependencies:
 
 ## Installing And Executing
 
-To install and run the program you can click on the [release](https://github.com/TalMizrahii/Encryption-Box/releases/tag/v1.0) button in this repository.
-  
-You can also use [Git](https://git-scm.com). From your command line:
+To install and run the program you use [Git](https://git-scm.com). From your command line:
 
 ```bash
 # Clone this repository.
