@@ -35,6 +35,9 @@ The program consists of two Python scripts:
 - **musicrawl.py**: This script defines functions for expanding URLs and crawling web pages. It utilizes the `requests` library to fetch web pages and the `lxml` library to parse HTML content. The `musicExpand` function expands relative artist URLs to full URLs and filters out irrelevant pages. The `musicCrawl` function recursively crawls through artist pages, collecting related artist URLs.
 - **q1.py**: This script demonstrates the usage of XPath expressions to extract related artist URLs from a given artist page. It defines a function `get_related_artists_urls` which takes an artist URL as input and applies a set of predefined XPath expressions to locate related artist links.
 
+### Important
+The program expands only 50 different URLs (but you can always change it if you like). It also takes into consideration crawling ethics, so between each HTTP request to the site, there is a 3-second waiting time.
+
 ## Dependencies
 
 The program requires the following dependencies:
