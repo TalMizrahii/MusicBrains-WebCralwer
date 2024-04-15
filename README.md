@@ -30,6 +30,9 @@ musicExpand: This function takes a URL of an artist's MusicBrainz page and the c
 
 musicCrawl: This function is responsible for crawling the expanded URLs obtained from the musicExpand function. It takes the initial artist URL and a list of XPath expressions as input. The function utilizes the expanded URLs and XPath expressions to extract a set of URLs matching the given expressions. These URLs are then prioritized based on their occurrence count in the crawled web pages, with ties being resolved alphabetically. The function adheres to crawling ethics, waiting at least 3 seconds between page reads. It ensures that at most 50 unique URLs of musicbrainz.org are crawled, and each URL is crawled only once. The function returns a list of lists, where each inner list contains a source URL that has been crawled and URLs of related pages detected by the XPath expressions, converted to full URLs.
 
+![featured_image_musicbrainz](https://github.com/TalMizrahii/MusicBrains-WebCralwer/assets/103560553/af2522e2-4a39-40d6-a4eb-a35cb140c0cd)
+
+
 These functions collectively form the core of the MusicBrains Web Crawler, enabling systematic exploration of artist pages on MusicBrainz to uncover related artists and their associated information. The program utilizes Python's requests library for web requests and the lxml library for parsing HTML content, offering a robust and efficient solution for gathering music-related data from the web.
 
 ## Implementation
