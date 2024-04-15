@@ -21,7 +21,13 @@
   
 ### About The Program
 
-The MusicBrains Web Crawler is a Python program designed to crawl musicbrains.org, a database of music information. It specifically targets artist pages to retrieve URLs of related artists. The program employs web crawling techniques, utilizing XPath expressions to locate and extract relevant links from HTML content.
+The MusicBrains Web Crawler is a Python program designed to systematically traverse the MusicBrainz database, focusing on artist pages to gather URLs of related artists. It accomplishes this through two primary functions:
+
+musicExpand: This function takes a URL of an artist's MusicBrainz page and the corresponding webpage contents as input. Its purpose is to expand the initial URL into a list of URLs representing pages related to the same artist. Using a combination of XPath expressions and URL manipulation in Python, it ensures that only relevant pages within the musicbrainz.org domain and belonging to the same artist are included. For instance, it may return URLs such as https://musicbrainz.org/artist/eab76c9f-ff91-4431-b6dd-3b976c598020/relationships or https://musicbrainz.org/artist/eab76c9f-ff91-4431-b6dd-3b976c598020/recordings.
+
+musicCrawl: This function is responsible for crawling the expanded URLs obtained from the musicExpand function. It takes the initial artist URL and a list of XPath expressions as input. The function utilizes the expanded URLs and XPath expressions to extract a set of URLs matching the given expressions. These URLs are then prioritized based on their occurrence count in the crawled web pages, with ties being resolved alphabetically. The function adheres to crawling ethics, waiting at least 3 seconds between page reads. It ensures that at most 50 unique URLs of musicbrainz.org are crawled, and each URL is crawled only once. The function returns a list of lists, where each inner list contains a source URL that has been crawled and URLs of related pages detected by the XPath expressions, converted to full URLs.
+
+These functions collectively form the core of the MusicBrains Web Crawler, enabling systematic exploration of artist pages on MusicBrainz to uncover related artists and their associated information. The program utilizes Python's requests library for web requests and the lxml library for parsing HTML content, offering a robust and efficient solution for gathering music-related data from the web.
 
 ## Implementation
 
